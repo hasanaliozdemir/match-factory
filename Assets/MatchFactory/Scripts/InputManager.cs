@@ -138,10 +138,20 @@ public class InputManager : MonoBehaviour
             Debug.DrawRay(hitInfo.point, Vector3.up * 0.5f, Color.yellow, 0.1f);
         }
 
+
+
         if (hitInfo.collider == null)
+        {
             return null;
+        }
+
+        if (hitInfo.collider.transform.parent == null)
+        {
+            return null;
+        }
+
         Item item = null;
-        if (!hitInfo.collider.TryGetComponent<Item>(out item))
+        if (!hitInfo.collider.transform.parent.TryGetComponent<Item>(out item))
         {
             item = hitInfo.collider.GetComponentInParent<Item>();
         }
