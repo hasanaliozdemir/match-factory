@@ -11,6 +11,7 @@ public class InputManager : MonoBehaviour
     public static Action<Item> itemClicked;
 
     [Header("Settings")]
+    [SerializeField] private Material outlineMaterial;
     private Item currentItem;
     private bool isDragging = false;
 
@@ -49,9 +50,17 @@ public class InputManager : MonoBehaviour
         Item hit = GetItemUnderPointer(pointerPos);
         if (hit != currentItem)
         {
+            // Deselect the old item
+            if (currentItem != null)
+                currentItem.Deselect();
+
+            // Select the new item
             currentItem = hit;
             if (currentItem != null)
+            {
+                currentItem.Select(outlineMaterial);
                 Debug.Log("Dragging over item: " + currentItem.gameObject.name);
+            }
         }
     }
 
@@ -63,13 +72,20 @@ public class InputManager : MonoBehaviour
         Vector2 pointerPos = GetPointerPosition();
         currentItem = GetItemUnderPointer(pointerPos);
         if (currentItem != null)
+        {
+            currentItem.Select(outlineMaterial);
             Debug.Log("Started drag on item: " + currentItem.gameObject.name);
+        }
     }
 
     private void OnClickCanceled(InputAction.CallbackContext context)
     {
         // pointer released
         isDragging = false;
+        // Deselect the currently selected item
+        if (currentItem != null)
+            currentItem.Deselect();
+
         // final check at release position
         Vector2 pointerPos = GetPointerPosition();
         Item releasedOver = GetItemUnderPointer(pointerPos);

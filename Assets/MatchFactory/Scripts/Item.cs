@@ -5,6 +5,15 @@ public class Item : MonoBehaviour
     [Header("Elements")]
     [SerializeField] private Rigidbody rig;
     [SerializeField] private Collider itemCollider;
+    [SerializeField] private Renderer itemRenderer;
+
+
+    private Material baseMaterial;
+
+    void Awake()
+    {
+        baseMaterial = itemRenderer.material;
+    }
 
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
@@ -29,5 +38,16 @@ public class Item : MonoBehaviour
         // Implementation to disable the item's collider/physics
         rig.isKinematic = true;
         itemCollider.enabled = false;
+    }
+
+    public void Select(Material outlineMaterial)
+    {
+        itemRenderer.materials = new Material[2] { baseMaterial, outlineMaterial };
+
+    }
+
+    public void Deselect()
+    {
+        itemRenderer.materials = new Material[1] { baseMaterial };
     }
 }
