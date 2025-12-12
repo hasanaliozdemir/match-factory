@@ -12,6 +12,7 @@ public class InputManager : MonoBehaviour
 
     [Header("Settings")]
     [SerializeField] private Material outlineMaterial;
+    [SerializeField] private bool showRaycastDebug = false;
     private Item currentItem;
     private bool isDragging = false;
 
@@ -123,8 +124,20 @@ public class InputManager : MonoBehaviour
         if (cam == null)
             return null;
         Ray ray = cam.ScreenPointToRay(pointerPos);
+
         if (!Physics.Raycast(ray, out RaycastHit hitInfo, 100))
+        {
+            if (showRaycastDebug)
+                Debug.DrawRay(ray.origin, ray.direction * 100, Color.red, 0.1f);
             return null;
+        }
+
+        if (showRaycastDebug)
+        {
+            Debug.DrawRay(ray.origin, ray.direction * hitInfo.distance, Color.green, 0.1f);
+            Debug.DrawRay(hitInfo.point, Vector3.up * 0.5f, Color.yellow, 0.1f);
+        }
+
         if (hitInfo.collider == null)
             return null;
         Item item = null;
