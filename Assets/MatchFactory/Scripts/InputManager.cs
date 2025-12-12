@@ -8,11 +8,11 @@ public class InputManager : MonoBehaviour
 {
     private InputAction clickAction;
 
-
     public static Action<Item> itemClicked;
 
     [Header("Settings")]
     private Item currentItem;
+    private bool isDragging = false;
 
     private void Awake()
     {
@@ -20,7 +20,9 @@ public class InputManager : MonoBehaviour
         clickAction = new InputAction("Click", InputActionType.Button);
         clickAction.AddBinding("<Mouse>/leftButton");
         clickAction.AddBinding("<Touchscreen>/primaryTouch/press");
-        clickAction.performed += OnClickPerformed;
+        // Use started/canceled so we can track dragging and release
+        clickAction.started += OnClickStarted;
+        clickAction.canceled += OnClickCanceled;
     }
 
     private void OnEnable()
@@ -32,20 +34,58 @@ public class InputManager : MonoBehaviour
     {
         if (clickAction != null)
         {
-            clickAction.performed -= OnClickPerformed;
+            clickAction.started -= OnClickStarted;
+            clickAction.canceled -= OnClickCanceled;
             clickAction.Disable();
         }
     }
 
-    private void OnClickPerformed(InputAction.CallbackContext context)
+    private void Update()
     {
-        HandlePointerDown();
+        if (!isDragging)
+            return;
+
+        Vector2 pointerPos = GetPointerPosition();
+        Item hit = GetItemUnderPointer(pointerPos);
+        if (hit != currentItem)
+        {
+            currentItem = hit;
+            if (currentItem != null)
+                Debug.Log("Dragging over item: " + currentItem.gameObject.name);
+        }
     }
 
-    private void HandlePointerDown()
+    private void OnClickStarted(InputAction.CallbackContext context)
+    {
+        isDragging = true;
+        currentItem = null;
+        // do an initial update immediately
+        Vector2 pointerPos = GetPointerPosition();
+        currentItem = GetItemUnderPointer(pointerPos);
+        if (currentItem != null)
+            Debug.Log("Started drag on item: " + currentItem.gameObject.name);
+    }
+
+    private void OnClickCanceled(InputAction.CallbackContext context)
+    {
+        // pointer released
+        isDragging = false;
+        // final check at release position
+        Vector2 pointerPos = GetPointerPosition();
+        Item releasedOver = GetItemUnderPointer(pointerPos);
+        // Use the latest collided item as `currentItem` (as requested)
+        currentItem = releasedOver;
+        if (currentItem != null)
+        {
+            Debug.Log("Released over item: " + currentItem.gameObject.name);
+            itemClicked?.Invoke(currentItem);
+        }
+        currentItem = null;
+    }
+
+    private Vector2 GetPointerPosition()
     {
         Vector2 pointerPos = Vector2.zero;
-        // Prefer the generic Pointer (works for mouse, pen, touch). Fall back to Touchscreen or Mouse.
         if (Pointer.current != null)
         {
             pointerPos = Pointer.current.position.ReadValue();
@@ -58,35 +98,24 @@ public class InputManager : MonoBehaviour
         {
             pointerPos = Mouse.current.position.ReadValue();
         }
+        return pointerPos;
+    }
+
+    private Item GetItemUnderPointer(Vector2 pointerPos)
+    {
         Camera cam = Camera.main;
         if (cam == null)
-        {
-            return;
-        }
+            return null;
         Ray ray = cam.ScreenPointToRay(pointerPos);
-        Physics.Raycast(ray, out RaycastHit hitInfo, 100);
-
+        if (!Physics.Raycast(ray, out RaycastHit hitInfo, 100))
+            return null;
         if (hitInfo.collider == null)
-        {
-            return;
-        }
-
-
-
+            return null;
         Item item = null;
-        // First try the exact collider's gameobject
         if (!hitInfo.collider.TryGetComponent<Item>(out item))
         {
-            // If not found, try the parents (common when collider is on a child object)
             item = hitInfo.collider.GetComponentInParent<Item>();
-            if (item == null)
-            {
-                return;
-            }
         }
-
-        Debug.Log("Clicked on item: " + item.gameObject.name);
-        itemClicked?.Invoke(item);
-
+        return item;
     }
 }
