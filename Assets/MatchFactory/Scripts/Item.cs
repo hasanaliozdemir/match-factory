@@ -30,6 +30,7 @@ public class Item : MonoBehaviour
     public void DisableShadow()
     {
         // Implementation to disable the item's shadow
+        itemRenderer.shadowCastingMode = UnityEngine.Rendering.ShadowCastingMode.Off;
 
     }
 

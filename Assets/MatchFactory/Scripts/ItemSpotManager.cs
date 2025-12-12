@@ -3,7 +3,8 @@ using UnityEngine;
 public class ItemSpotManager : MonoBehaviour
 {
     [Header("Elements")]
-    [SerializeField] private Transform itemSpot;
+    [SerializeField] private Transform itemSpotsParent;
+    private ItemSpot[] spots;
 
     [Header("Settings")]
     [SerializeField] private Vector3 itemLocalPositionOnSpot;
@@ -12,6 +13,8 @@ public class ItemSpotManager : MonoBehaviour
     void Awake()
     {
         InputManager.itemClicked += OnItemClicked;
+
+        StoreSpots();
     }
 
     void OnDestroy()
@@ -33,9 +36,36 @@ public class ItemSpotManager : MonoBehaviour
 
     private void OnItemClicked(Item item)
     {
+
+        if (!IsFreeSpotAvailable())
+        {
+            Debug.Log("No free item spot available!");
+            return;
+        }
+
+        HandleItemClicked(item);
+
+
+    }
+
+    private void HandleItemClicked(Item item)
+    {
+        MoveItemtoFirstFreeSpot(item);
+    }
+
+    private void MoveItemtoFirstFreeSpot(Item item)
+    {
+        ItemSpot targetSpot = GetFreeSpot();
+
+        if (targetSpot == null)
+        {
+            Debug.LogError("No free item spot found! !! Logic error.");
+            return;
+        }
+
         // 1. Turn the item as a child of item spot
 
-        item.transform.SetParent(itemSpot);
+        targetSpot.Populate(item);
 
         // 2. Scale the item down, set its position and rotation to zero
 
@@ -49,5 +79,39 @@ public class ItemSpotManager : MonoBehaviour
         // 4. Disable item's collider/Physics
 
         item.DisablePhysics();
+    }
+
+    private void StoreSpots()
+    {
+        int spotCount = itemSpotsParent.childCount;
+        spots = new ItemSpot[spotCount];
+        for (int i = 0; i < spotCount; i++)
+        {
+            spots[i] = itemSpotsParent.GetChild(i).GetComponent<ItemSpot>();
+        }
+    }
+
+    private ItemSpot GetFreeSpot()
+    {
+        for (int i = 0; i < spots.Length; i++)
+        {
+            if (spots[i].IsEmpty())
+            {
+                return spots[i];
+            }
+        }
+        return null;
+    }
+
+    private bool IsFreeSpotAvailable()
+    {
+        for (int i = 0; i < spots.Length; i++)
+        {
+            if (spots[i].IsEmpty())
+            {
+                return true;
+            }
+        }
+        return false;
     }
 }
