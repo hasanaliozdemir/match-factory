@@ -1,3 +1,4 @@
+using System.IO.Compression;
 using UnityEngine;
 
 public class Item : MonoBehaviour
@@ -9,10 +10,17 @@ public class Item : MonoBehaviour
 
 
     private Material baseMaterial;
+    private ItemSpot spot;
 
+    public ItemSpot Spot => spot;
     void Awake()
     {
         baseMaterial = itemRenderer.material;
+    }
+
+    public void AssignSpot(ItemSpot spot)
+    {
+        this.spot = spot;
     }
 
     // Start is called once before the first execution of Update after the MonoBehaviour is created
