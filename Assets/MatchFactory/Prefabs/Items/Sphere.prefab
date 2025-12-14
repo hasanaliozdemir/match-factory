@@ -188,3 +188,4 @@ MonoBehaviour:
   rig: {fileID: 4970753054859520899}
   itemCollider: {fileID: 2082521880563702058}
   itemRenderer: {fileID: 341323359417213771}
+  type: 2
