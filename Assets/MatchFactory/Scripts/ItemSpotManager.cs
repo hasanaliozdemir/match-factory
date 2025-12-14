@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using MatchFactory.Scripts.Enums;
 using UnityEngine;
+using UnityEngine.XR;
 
 public class ItemSpotManager : MonoBehaviour
 {
@@ -100,10 +101,10 @@ public class ItemSpotManager : MonoBehaviour
             return;
         }
 
-        MoveItemToSpot(item, targetSpot);
+        MoveItemToSpot(item, targetSpot, () => HandleItemReachedSpot(item));
     }
 
-    private void MoveItemToSpot(Item item, ItemSpot targetSpot, bool checkForMerge = true)
+    private void MoveItemToSpot(Item item, ItemSpot targetSpot, Action completeCallback)
     {
         // 1. Turn the item as a child of item spot
 
@@ -122,7 +123,9 @@ public class ItemSpotManager : MonoBehaviour
 
         item.DisablePhysics();
 
-        HandleItemReachedSpot(item, checkForMerge);
+        completeCallback?.Invoke();
+
+        // HandleItemReachedSpot(item, checkForMerge);
     }
 
     private void HandleItemReachedSpot(Item item, bool checkForMerge = true)
@@ -183,7 +186,7 @@ public class ItemSpotManager : MonoBehaviour
 
             spot.Clear();
 
-            MoveItemToSpot(item, targetSpot, false);
+            MoveItemToSpot(item, targetSpot, () => HandleItemReachedSpot(item, false));
 
         }
         HandleAllItemsMovedToTheLeft();
@@ -225,9 +228,9 @@ public class ItemSpotManager : MonoBehaviour
                 continue;
             }
             Debug.Log("Moving item " + item.name + " from spot " + i + " to spot " + (i + 1));
-            MoveItemToSpot(item, targetSpot, false);
+            MoveItemToSpot(item, targetSpot, () => HandleItemReachedSpot(item, false));
         }
-        MoveItemToSpot(itemToPlace, idealSpot);
+        MoveItemToSpot(itemToPlace, idealSpot, () => HandleItemReachedSpot(itemToPlace));
     }
 
     private ItemSpot GetIdealSpotFor(Item item)
@@ -264,7 +267,7 @@ public class ItemSpotManager : MonoBehaviour
 
         CreateItemMergeData(item);
 
-        MoveItemToSpot(item, targetSpot);
+        MoveItemToSpot(item, targetSpot, () => HandleFirstItemReachedSpot(item));
     }
 
     private void HandleFirstItemReachedSpot(Item item)
