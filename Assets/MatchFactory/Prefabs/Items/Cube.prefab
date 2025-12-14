@@ -76,6 +76,7 @@ MonoBehaviour:
   rig: {fileID: 6117106668093927434}
   itemCollider: {fileID: 6082291394407569742}
   itemRenderer: {fileID: 4794763837656555189}
+  type: 3
 --- !u!1 &9070426089173398049
 GameObject:
   m_ObjectHideFlags: 0

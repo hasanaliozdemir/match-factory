@@ -1,0 +1,24 @@
+# Normalize all text files to LF in the repo
+* text=auto eol=lf
+
+# Unity / C# specific
+*.cs        text eol=lf
+*.shader    text eol=lf
+*.cginc     text eol=lf
+*.asmdef    text eol=lf
+*.json      text eol=lf
+*.yaml      text eol=lf
+*.yml       text eol=lf
+*.md        text eol=lf
+
+# Unity meta files
+*.meta      text eol=lf
+
+# Binary files (never touch line endings)
+*.png       binary
+*.jpg       binary
+*.fbx       binary
+*.psd       binary
+*.wav       binary
+*.mp3       binary
+

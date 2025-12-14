@@ -1,5 +1,7 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
+using MatchFactory.Scripts.Enums;
 using UnityEngine;
 
 public class ItemSpotManager : MonoBehaviour
@@ -11,7 +13,7 @@ public class ItemSpotManager : MonoBehaviour
 
 
     [Header("Data")]
-    private Dictionary<string, ItemMergeData> itemMergeDataDictionary = new Dictionary<string, ItemMergeData>();
+    private Dictionary<ItemEnum, ItemMergeData> itemMergeDataDictionary = new Dictionary<ItemEnum, ItemMergeData>();
 
 
     [Header("Settings")]
@@ -67,7 +69,7 @@ public class ItemSpotManager : MonoBehaviour
 
     private void HandleItemClicked(Item item)
     {
-        if (itemMergeDataDictionary.ContainsKey(item.name))
+        if (itemMergeDataDictionary.ContainsKey(item.Type))
         {
             HandleItemMergeDataFound(item);
 
@@ -84,7 +86,7 @@ public class ItemSpotManager : MonoBehaviour
     {
         ItemSpot idealSpot = GetIdealSpotFor(item);
 
-        itemMergeDataDictionary[item.name].AddItem(item);
+        itemMergeDataDictionary[item.Type].AddItem(item);
 
 
         TryMoveItemToIdealSpot(item, idealSpot);
@@ -98,10 +100,10 @@ public class ItemSpotManager : MonoBehaviour
             return;
         }
 
-        MoveItemtoSpot(item, targetSpot);
+        MoveItemToSpot(item, targetSpot);
     }
 
-    private void MoveItemtoSpot(Item item, ItemSpot targetSpot, bool checkForMerge = true)
+    private void MoveItemToSpot(Item item, ItemSpot targetSpot, bool checkForMerge = true)
     {
         // 1. Turn the item as a child of item spot
 
@@ -131,9 +133,9 @@ public class ItemSpotManager : MonoBehaviour
             return;
         }
 
-        if (itemMergeDataDictionary[item.name].CanMergeItems())
+        if (itemMergeDataDictionary[item.Type].CanMergeItems())
         {
-            MergeItems(itemMergeDataDictionary[item.name]);
+            MergeItems(itemMergeDataDictionary[item.Type]);
         }
         else
         {
@@ -146,12 +148,12 @@ public class ItemSpotManager : MonoBehaviour
         List<Item> items = itemMergeData.items;
 
         // Remove the item merge data from dictionary
-        itemMergeDataDictionary.Remove(itemMergeData.itemName);
+        itemMergeDataDictionary.Remove(itemMergeData.itemType);
 
-        for (int i = 0; i < items.Count; i++)
+        foreach (var t in items)
         {
-            items[i].Spot.Clear();
-            Destroy(items[i].gameObject);
+            t.Spot.Clear();
+            Destroy(t.gameObject);
         }
 
         MoveAllITemsToTheLeft();
@@ -181,7 +183,7 @@ public class ItemSpotManager : MonoBehaviour
 
             spot.Clear();
 
-            MoveItemtoSpot(item, targetSpot, false);
+            MoveItemToSpot(item, targetSpot, false);
 
         }
         HandleAllItemsMovedToTheLeft();
@@ -223,14 +225,14 @@ public class ItemSpotManager : MonoBehaviour
                 continue;
             }
             Debug.Log("Moving item " + item.name + " from spot " + i + " to spot " + (i + 1));
-            MoveItemtoSpot(item, targetSpot, false);
+            MoveItemToSpot(item, targetSpot, false);
         }
-        MoveItemtoSpot(itemToPlace, idealSpot);
+        MoveItemToSpot(itemToPlace, idealSpot);
     }
 
     private ItemSpot GetIdealSpotFor(Item item)
     {
-        List<Item> items = itemMergeDataDictionary[item.name].items;
+        List<Item> items = itemMergeDataDictionary[item.Type].items;
         List<ItemSpot> itemSpots = new List<ItemSpot>();
 
         for (int i = 0; i < items.Count; i++)
@@ -262,7 +264,7 @@ public class ItemSpotManager : MonoBehaviour
 
         CreateItemMergeData(item);
 
-        MoveItemtoSpot(item, targetSpot);
+        MoveItemToSpot(item, targetSpot);
     }
 
     private void HandleFirstItemReachedSpot(Item item)
@@ -281,7 +283,7 @@ public class ItemSpotManager : MonoBehaviour
 
     private void CreateItemMergeData(Item item)
     {
-        itemMergeDataDictionary.Add(item.name, new ItemMergeData(item));
+        itemMergeDataDictionary.Add(item.Type, new ItemMergeData(item));
         Debug.Log("Created ItemMergeData for item: " + item.name);
     }
 
@@ -297,14 +299,7 @@ public class ItemSpotManager : MonoBehaviour
 
     private ItemSpot GetFreeSpot()
     {
-        for (int i = 0; i < spots.Length; i++)
-        {
-            if (spots[i].IsEmpty())
-            {
-                return spots[i];
-            }
-        }
-        return null;
+        return spots.FirstOrDefault(t => t.IsEmpty());
     }
 
     private bool IsFreeSpotAvailable()

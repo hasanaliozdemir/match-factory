@@ -1,17 +1,16 @@
 using System.Collections.Generic;
+using MatchFactory.Scripts.Enums;
 using UnityEngine;
 
 public struct ItemMergeData
 {
-    public string itemName;
+    public ItemEnum itemType;
     public List<Item> items;
 
     public ItemMergeData(Item firstItem)
     {
-        itemName = firstItem.name;
-        items = new List<Item>();
-        items.Add(firstItem);
-
+        itemType = firstItem.Type;
+        items = new List<Item> { firstItem };
     }
 
     public void AddItem(Item item)

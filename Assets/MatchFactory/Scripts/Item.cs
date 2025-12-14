@@ -1,4 +1,5 @@
 using System.IO.Compression;
+using MatchFactory.Scripts.Enums;
 using UnityEngine;
 
 public class Item : MonoBehaviour
@@ -7,7 +8,11 @@ public class Item : MonoBehaviour
     [SerializeField] private Rigidbody rig;
     [SerializeField] private Collider itemCollider;
     [SerializeField] private Renderer itemRenderer;
+    
+    [Header("Item Data")]
+    [SerializeField] private ItemEnum type;
 
+    public ItemEnum Type => type;
 
     private Material baseMaterial;
     private ItemSpot spot;
