@@ -1891,13 +1891,21 @@ PrefabInstance:
       propertyPath: m_Name
       value: Key
       objectReference: {fileID: 0}
+    - target: {fileID: 6387173170769758743, guid: 42f469a7ef9004d5b973feb2700cd0d0, type: 3}
+      propertyPath: m_Constraints
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 6387173170769758743, guid: 42f469a7ef9004d5b973feb2700cd0d0, type: 3}
+      propertyPath: m_CollisionDetection
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 8686150756953810893, guid: 42f469a7ef9004d5b973feb2700cd0d0, type: 3}
       propertyPath: m_LocalPosition.x
       value: 1.405
       objectReference: {fileID: 0}
     - target: {fileID: 8686150756953810893, guid: 42f469a7ef9004d5b973feb2700cd0d0, type: 3}
       propertyPath: m_LocalPosition.y
-      value: 0.6
+      value: 3
       objectReference: {fileID: 0}
     - target: {fileID: 8686150756953810893, guid: 42f469a7ef9004d5b973feb2700cd0d0, type: 3}
       propertyPath: m_LocalPosition.z
