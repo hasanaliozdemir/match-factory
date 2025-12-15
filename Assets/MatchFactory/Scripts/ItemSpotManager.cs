@@ -20,6 +20,12 @@ public class ItemSpotManager : MonoBehaviour
     [Header("Settings")]
     [SerializeField] private Vector3 itemLocalPositionOnSpot;
     [SerializeField] private Vector3 itemLocalScaleOnSpot;
+
+
+    [Header("Animation Settings")]
+    [SerializeField] private float animationDuration = 0.15f;
+    [SerializeField] private LeanTweenType animationEaseType = LeanTweenType.easeInOutSine;
+
     private bool isBusy;
 
     void Awake()
@@ -112,18 +118,26 @@ public class ItemSpotManager : MonoBehaviour
 
         // 2. Scale the item down, set its position and rotation to zero
 
-        item.transform.localPosition = itemLocalPositionOnSpot;
-        item.transform.localScale = itemLocalScaleOnSpot;
-        item.transform.localRotation = Quaternion.identity;
-        // 3. Disable item's shadow
+        // item.transform.localPosition = itemLocalPositionOnSpot;
+        // item.transform.localScale = itemLocalScaleOnSpot;
+        // item.transform.localRotation = Quaternion.identity;
 
+        // Which object, where, how fast
+        LeanTween.moveLocal(item.gameObject, itemLocalPositionOnSpot, animationDuration).setEase(animationEaseType);
+        LeanTween.scale(item.gameObject, itemLocalScaleOnSpot, animationDuration).setEase(animationEaseType);
+        LeanTween.rotateLocal(item.gameObject, Vector3.zero, animationDuration)
+        .setEase(animationEaseType)
+        .setOnComplete(completeCallback);
+
+
+        // 3. Disable item's shadow
         item.DisableShadow();
 
         // 4. Disable item's collider/Physics
 
         item.DisablePhysics();
 
-        completeCallback?.Invoke();
+
     }
 
     private void HandleItemReachedSpot(Item item, bool checkForMerge = true)
@@ -157,12 +171,19 @@ public class ItemSpotManager : MonoBehaviour
             Destroy(t.gameObject);
         }
 
-        MoveAllITemsToTheLeft();
-
+        if (itemMergeDataDictionary.Count <= 0)
+        {
+            isBusy = false;
+        }
+        else
+        {
+            MoveAllITemsToTheLeft(HandleAllItemsMovedToTheLeft);
+        }
     }
 
-    private void MoveAllITemsToTheLeft()
+    private void MoveAllITemsToTheLeft(Action completeCallback)
     {
+        bool callBackTriggered = false;
         for (int i = 3; i < spots.Length; i++)
         {
             ItemSpot spot = spots[i];
@@ -184,10 +205,15 @@ public class ItemSpotManager : MonoBehaviour
 
             spot.Clear();
 
-            MoveItemToSpot(item, targetSpot, () => HandleItemReachedSpot(item, false));
+            completeCallback += () => HandleItemReachedSpot(item, false);
 
+            MoveItemToSpot(item, targetSpot, completeCallback);
+            callBackTriggered = true;
         }
-        HandleAllItemsMovedToTheLeft();
+        if (!callBackTriggered)
+        {
+            completeCallback?.Invoke();
+        }
     }
 
     private void HandleAllItemsMovedToTheLeft()
