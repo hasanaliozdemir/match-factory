@@ -218,7 +218,7 @@ MonoBehaviour:
     - line: '|   buildNumber:'
     - line: '|     Standalone: 0'
     - line: '|     VisionOS: 0'
-    - line: '|     iPhone: 2'
+    - line: '|     iPhone: 3'
     - line: '|     tvOS: 0'
     - line: '|   overrideDefaultApplicationIdentifier: 1'
     - line: '|   AndroidBundleVersionCode: 1'
@@ -346,7 +346,7 @@ MonoBehaviour:
     - line: '|   - m_BuildTarget: '
     - line: '|     m_Icons:'
     - line: '|     - serializedVersion: 2'
-    - line: '|       m_Icon: {fileID: 2800000, guid: 06260f6928ede47b7858becf817aa628,
+    - line: '|       m_Icon: {fileID: 2800000, guid: b0414db4725924fd98de5f9e67e62d80,
         type: 3}'
     - line: '|       m_Width: 128'
     - line: '|       m_Height: 128'
