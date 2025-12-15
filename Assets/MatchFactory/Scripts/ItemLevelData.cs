@@ -4,6 +4,7 @@ using UnityEngine;
 public struct ItemLevelData
 {
     public Item itemPrefab;
+    public bool isGoal;
 
     [NaughtyAttributes.ValidateInput("ValidateAmount", "Amount must be greater than 0 and multiple of 3")]
     [NaughtyAttributes.AllowNesting]
