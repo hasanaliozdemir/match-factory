@@ -906,6 +906,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ecadaa90086a040ae86aff1be3b158dd, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::MergeManager
+  goUpDistance: 0.15
+  goUpDuration: 0.2
+  goUpEasing: 16
+  mergeDuration: 0.3
 --- !u!4 &801782323 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 931809505539729764, guid: 04edde3e7d38a4335869b581e82045ba, type: 3}
