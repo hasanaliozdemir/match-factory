@@ -16,7 +16,7 @@ public class ItemSpot : MonoBehaviour
     public void Populate(Item item)
     {
         this.item = item;
-        item.transform.SetParent(transform);
+        item.transform.SetParent(itemParent);
 
         item.AssignSpot(this);
     }
@@ -24,6 +24,11 @@ public class ItemSpot : MonoBehaviour
     public bool IsEmpty()
     {
         return item == null;
+    }
+
+    public void BumpDown()
+    {
+        animator.Play("Bump", 0, 0);
     }
 
     public void Clear()

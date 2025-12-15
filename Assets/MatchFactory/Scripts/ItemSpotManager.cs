@@ -143,6 +143,8 @@ public class ItemSpotManager : MonoBehaviour
     private void HandleItemReachedSpot(Item item, bool checkForMerge = true)
     {
 
+        item.Spot.BumpDown();
+
         if (!checkForMerge)
         {
             return;
@@ -296,6 +298,8 @@ public class ItemSpotManager : MonoBehaviour
 
     private void HandleFirstItemReachedSpot(Item item)
     {
+        item.Spot.BumpDown();
+
         CheckForGameOver();
     }
 
