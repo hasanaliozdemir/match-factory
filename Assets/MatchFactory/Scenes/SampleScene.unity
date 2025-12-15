@@ -909,7 +909,9 @@ MonoBehaviour:
   goUpDistance: 0.15
   goUpDuration: 0.2
   goUpEasing: 16
-  mergeDuration: 0.3
+  smashDuration: 0.2
+  smashEasing: 26
+  mergeParticles: {fileID: 98628828116471351, guid: db79075f9e5484f898d14951fad90e36, type: 3}
 --- !u!4 &801782323 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 931809505539729764, guid: 04edde3e7d38a4335869b581e82045ba, type: 3}
