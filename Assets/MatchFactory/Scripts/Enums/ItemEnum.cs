@@ -2,9 +2,9 @@
 {
     public enum ItemEnum
     {
-        Cylinder,
-        Capsule,
-        Sphere,
+        Bomb,
+        Blue_Potion,
+        Coin,
         Cube,
         Key,
     }

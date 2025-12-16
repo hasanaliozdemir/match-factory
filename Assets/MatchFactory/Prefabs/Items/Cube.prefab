@@ -77,6 +77,7 @@ MonoBehaviour:
   itemCollider: {fileID: 6082291394407569742}
   itemRenderer: {fileID: 4794763837656555189}
   type: 3
+  icon: {fileID: 21300000, guid: 03d93f0af71a932438f67fe810db03b9, type: 3}
 --- !u!1 &9070426089173398049
 GameObject:
   m_ObjectHideFlags: 0

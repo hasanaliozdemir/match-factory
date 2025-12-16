@@ -8,7 +8,7 @@ public class Item : MonoBehaviour
     [SerializeField] private Rigidbody rig;
     [SerializeField] private Collider itemCollider;
     [SerializeField] private Renderer itemRenderer;
-    
+
     [Header("Item Data")]
     [SerializeField] private ItemEnum type;
 
@@ -18,6 +18,12 @@ public class Item : MonoBehaviour
     private ItemSpot spot;
 
     public ItemSpot Spot => spot;
+
+    [SerializeField] private Sprite icon;
+
+    public Sprite Icon => icon;
+
+
     void Awake()
     {
         baseMaterial = itemRenderer.material;
@@ -63,5 +69,11 @@ public class Item : MonoBehaviour
     public void Deselect()
     {
         itemRenderer.materials = new Material[1] { baseMaterial };
+    }
+
+    void OnDrawGizmos()
+    {
+        Gizmos.color = Color.red;
+        Gizmos.DrawSphere(transform.position, 0.02f);
     }
 }
