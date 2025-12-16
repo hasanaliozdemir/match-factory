@@ -154,6 +154,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Level
   itemPlacer: {fileID: 639383063319885080}
+  duration: 31
 --- !u!1001 &763087356715857912
 PrefabInstance:
   m_ObjectHideFlags: 0
