@@ -308,6 +308,7 @@ public class ItemSpotManager : MonoBehaviour
     {
         if (GetFreeSpot() == null)
         {
+            GameManager.instance.SetGameState(GameStateEnum.GAMEOVER);
             Debug.Log("Game Over! No free item spots left.");
         }
         isBusy = false;

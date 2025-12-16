@@ -42,7 +42,8 @@ public class InputManager : MonoBehaviour
         }
     }
 
-    private void Update()
+
+    private void HandleControls()
     {
         if (!isDragging)
             return;
@@ -62,6 +63,14 @@ public class InputManager : MonoBehaviour
                 currentItem.Select(outlineMaterial);
                 Debug.Log("Dragging over item: " + currentItem.gameObject.name);
             }
+        }
+    }
+
+    private void Update()
+    {
+        if (GameManager.instance.IsGame)
+        {
+            HandleControls();
         }
     }
 

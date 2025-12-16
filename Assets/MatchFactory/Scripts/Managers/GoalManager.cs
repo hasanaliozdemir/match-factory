@@ -95,6 +95,7 @@ public class GoalManager : MonoBehaviour
         }
 
         Debug.Log("All goals completed! Level complete!");
+        GameManager.instance.SetGameState(GameStateEnum.LEVELCOMPLETE);
 
     }
 }
