@@ -2,9 +2,15 @@ using System;
 using UnityEngine;
 
 public class LevelManager : MonoBehaviour, IGameStateListener
+
 {
+
+    public static LevelManager Instance;
+
     [Header("Data")]
     [SerializeField] private Level[] levels;
+
+    public Item[] Items() => currentLevel.GetItems();
 
     private const string LEVEL_KEY = "Level";
     private int levelIndex;
@@ -17,6 +23,11 @@ public class LevelManager : MonoBehaviour, IGameStateListener
 
     void Awake()
     {
+        if (Instance == null)
+            Instance = this;
+        else
+            Destroy(gameObject);
+
         LoadData();
     }
 

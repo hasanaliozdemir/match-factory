@@ -6,9 +6,13 @@ using UnityEngine;
 public class GoalManager : MonoBehaviour
 {
 
+    public static GoalManager Instance;
+
     [Header("Data")]
     private ItemLevelData[] goals;
     private List<GoalCard> goalCards = new List<GoalCard>();
+
+    public ItemLevelData[] Goals => goals;
 
     [Header("Elements")]
     [SerializeField] private Transform goalCardsParent;
@@ -16,8 +20,15 @@ public class GoalManager : MonoBehaviour
 
     void Awake()
     {
+        if (Instance == null)
+            Instance = this;
+        else
+            Destroy(gameObject);
+
+
         LevelManager.levelSpawned += OnLevelSpawned;
         ItemSpotManager.itemPickedUp += OnItemPickedUp;
+        PowerUpManager.itemPickedUp += OnItemPickedUp;
     }
 
 
@@ -26,6 +37,7 @@ public class GoalManager : MonoBehaviour
     {
         LevelManager.levelSpawned -= OnLevelSpawned;
         ItemSpotManager.itemPickedUp -= OnItemPickedUp;
+        PowerUpManager.itemPickedUp -= OnItemPickedUp;
     }
 
     private void OnLevelSpawned(Level level)
