@@ -20,6 +20,12 @@ public class PowerUpManager : MonoBehaviour
     [SerializeField] private Transform vacuumSuckPosition;
     [SerializeField] private Vacuum vacuum;
 
+    [Header("Fan Settings")]
+    [SerializeField] private float fanMagnitude;
+
+    [Header("FreezeGun Settings")]
+    [SerializeField] private float freezeGunDuration;
+
     [Header("Data")]
     [SerializeField] private int initialPUCount;
     private int vacuumPUCount;
@@ -245,7 +251,35 @@ public class PowerUpManager : MonoBehaviour
 
     #endregion
 
+    #region Fan
 
+    [Button]
+    public void FanPowerUp()
+    {
+
+        Item[] items = LevelManager.Instance.Items();
+
+        foreach (Item item in items)
+        {
+            Debug.Log("Applying fan force to item");
+            item.ApplyRandomForce(fanMagnitude);
+        }
+
+    }
+
+    #endregion
+
+    #region FreezeGun
+
+    [Button]
+    public void FreezeGunPowerUp()
+    {
+        // Freeze Level timer for 30secs
+        TimerManager.Instance.FreezeTimer(freezeGunDuration);
+    }
+
+
+    #endregion
     private void LoadData()
     {
         // TODO: bug var burda bir yerde ama uğraşamıcam

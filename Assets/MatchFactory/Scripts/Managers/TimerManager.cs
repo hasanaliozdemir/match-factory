@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class TimerManager : MonoBehaviour, IGameStateListener
 {
-    // Start is called once before the first execution of Update after the MonoBehaviour is created
+    public static TimerManager Instance;
 
     [Header("Elements")]
     [SerializeField] private TextMeshProUGUI timerText;
@@ -22,6 +22,11 @@ public class TimerManager : MonoBehaviour, IGameStateListener
 
     void Awake()
     {
+        if (Instance == null)
+            Instance = this;
+        else
+            Destroy(gameObject);
+
         LevelManager.levelSpawned += OnLevelSpawned;
     }
     void OnDestroy()
@@ -40,6 +45,11 @@ public class TimerManager : MonoBehaviour, IGameStateListener
     private void StartTimer()
     {
         InvokeRepeating(nameof(UpdateTimer), 1f, 1f);
+    }
+
+    private void StopTimer()
+    {
+        CancelInvoke(nameof(UpdateTimer));
     }
 
     private void UpdateTimer()
@@ -63,7 +73,14 @@ public class TimerManager : MonoBehaviour, IGameStateListener
     {
         if (newState != GameStateEnum.GAME)
         {
-            CancelInvoke(nameof(UpdateTimer));
+            CancelInvoke();
         }
     }
+
+    public void FreezeTimer(float duration)
+    {
+        StopTimer();
+        Invoke("StartTimer", duration);
+    }
+
 }

@@ -1,4 +1,3 @@
-using System.IO.Compression;
 using MatchFactory.Scripts.Enums;
 using UnityEngine;
 
@@ -94,5 +93,9 @@ public class Item : MonoBehaviour
     {
         Gizmos.color = Color.red;
         Gizmos.DrawSphere(transform.position, 0.02f);
+    }
+    public void ApplyRandomForce(float fanMagnitude)
+    {
+        rig.AddForce(Random.onUnitSphere * fanMagnitude, ForceMode.VelocityChange);
     }
 }
