@@ -275,7 +275,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::PowerUpManager
   vacuumSuckPosition: {fileID: 945702278}
   vacuum: {fileID: 923859702}
-  initialPUCount: 0
+  fanMagnitude: 11
+  initialPUCount: 3
 --- !u!4 &151933140 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 931809505539729764, guid: 04edde3e7d38a4335869b581e82045ba, type: 3}
