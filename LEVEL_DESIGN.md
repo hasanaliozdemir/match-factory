@@ -78,7 +78,7 @@ The level progression follows a carefully crafted difficulty curve:
 ### Goal Progression
 - **Early Game (1-10)**: Start with 3-9 items per goal, 1-2 goal types
 - **Mid Game (11-30)**: Scale to 9-15 items per goal, 2-5 goal types
-- **Late Game (31-50)**: Peak at 12-18 items per goal, 3-5 goal types
+- **Late Game (31-50)**: Peak at 12-18+ items per goal (max 18), 3-5 goal types
 
 ### Duration Progression
 - **Levels 1-10**: 55-70 seconds (learning phase)
@@ -89,21 +89,23 @@ The level progression follows a carefully crafted difficulty curve:
 
 ### Item Amount Progression
 - **Total items scale from 9 (Level 1) to 99 (Level 50)**
-- Linear progression: approximately +1.8 items per level
+- Average progression: approximately +1.84 items per level
+- Actual progression varies (0-3 items increase per level) to fine-tune difficulty
 - Ensures steady difficulty increase
 - All amounts are multiples of 3 (matching game constraint)
 
 ### Item Type Diversity
 - **Levels 1-5**: 2-3 types (introduction)
 - **Levels 6-13**: 3-4 types (building variety)
-- **Levels 14-50**: All 5 types present (full complexity)
+- **Levels 14-50**: All 5 types present in total items (full complexity)
+- **Level 20**: First level with all 5 types as goal items
 
 ## Design Constraints
 
 1. **Amount Constraint**: All item amounts must be multiples of 3 (matching mechanic)
 2. **Goal Items**: Goals are a subset of total items available in the level
 3. **Time Balance**: Duration increases with item count to maintain playability
-4. **Type Variety**: All 5 item types should be represented by level 20
+4. **Type Variety**: All 5 item types present in total items by level 14, all as goals by level 20
 
 ## Difficulty Factors
 
