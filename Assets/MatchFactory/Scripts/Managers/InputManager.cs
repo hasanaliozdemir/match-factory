@@ -2,6 +2,7 @@ using UnityEngine;
 using UnityEngine.InputSystem;
 
 using System;
+using Unity.InferenceEngine;
 
 
 public class InputManager : MonoBehaviour
@@ -9,9 +10,11 @@ public class InputManager : MonoBehaviour
     private InputAction clickAction;
 
     public static Action<Item> itemClicked;
+    public static Action<PowerUp> powerupClicked;
 
     [Header("Settings")]
     [SerializeField] private Material outlineMaterial;
+    [SerializeField] private LayerMask powerUpLayerMask;
     [SerializeField] private bool showRaycastDebug = false;
     private Item currentItem;
     private bool isDragging = false;
@@ -42,7 +45,8 @@ public class InputManager : MonoBehaviour
         }
     }
 
-    private void Update()
+
+    private void HandleControls()
     {
         if (!isDragging)
             return;
@@ -65,8 +69,17 @@ public class InputManager : MonoBehaviour
         }
     }
 
+    private void Update()
+    {
+        if (GameManager.instance.IsGame)
+        {
+            HandleControls();
+        }
+    }
+
     private void OnClickStarted(InputAction.CallbackContext context)
     {
+        HandleClickDown();
         isDragging = true;
         currentItem = null;
         // do an initial update immediately
@@ -98,6 +111,18 @@ public class InputManager : MonoBehaviour
             itemClicked?.Invoke(currentItem);
         }
         currentItem = null;
+    }
+
+    private void HandleClickDown()
+    {
+        Physics.Raycast(Camera.main.ScreenPointToRay(GetPointerPosition()), out RaycastHit hitInfo, 100, powerUpLayerMask);
+
+        if (hitInfo.collider == null)
+        {
+            return;
+        }
+
+        powerupClicked?.Invoke(hitInfo.collider.GetComponent<PowerUp>());
     }
 
     private Vector2 GetPointerPosition()
