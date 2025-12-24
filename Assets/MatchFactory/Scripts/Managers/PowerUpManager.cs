@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using NaughtyAttributes;
+using Unity.VisualScripting;
 using UnityEngine;
 
 public class PowerUpManager : MonoBehaviour
@@ -8,6 +9,82 @@ public class PowerUpManager : MonoBehaviour
 
     [Header("Actions")]
     public static Action<Item> itemPickedUp;
+
+    [Header("Settings")]
+    private bool isBusy = false;
+    private int vacuumItemsToCollect;
+    private int vacuumCounter;
+
+    [Header("Vacuum Elements")]
+    [SerializeField] private Transform vacuumSuckPosition;
+    [SerializeField] private Vacuum vacuum;
+
+    [Header("Data")]
+    [SerializeField] private int initialPUCount;
+    private int vacuumPUCount;
+
+    void Awake()
+    {
+        LoadData();
+
+        Vacuum.started += OnVacuumStarted;
+        InputManager.powerupClicked += OnPowerupClicked;
+    }
+
+    void OnDestroy()
+    {
+        Vacuum.started -= OnVacuumStarted;
+        InputManager.powerupClicked -= OnPowerupClicked;
+    }
+
+    private void OnPowerupClicked(PowerUp powerup)
+    {
+        if (isBusy)
+            return;
+
+        switch (powerup.PowerUpType)
+        {
+            case EPowerUpType.Vacuum:
+                HandleVacuumClicked();
+                break;
+            case EPowerUpType.Spring:
+                // Handle Spring powerup
+                break;
+            case EPowerUpType.Fan:
+                // Handle Fan powerup
+                break;
+            case EPowerUpType.FreezeGun:
+                // Handle FreezeGun powerup
+                break;
+            default:
+                Debug.LogWarning("Unhandled powerup type: " + powerup.PowerUpType);
+                break;
+        }
+    }
+
+    private void HandleVacuumClicked()
+    {
+        if (vacuumPUCount <= 0)
+        {
+            vacuumPUCount = 3;
+            SaveData();
+        }
+        else
+        {
+            isBusy = true;
+
+            vacuumPUCount--;
+            SaveData();
+
+            vacuum.Play();
+        }
+    }
+
+    private void OnVacuumStarted()
+    {
+        VacuumPowerup();
+    }
+
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
@@ -40,12 +117,18 @@ public class PowerUpManager : MonoBehaviour
             return;
         }
 
+        vacuumCounter = 0;
+
         ItemLevelData targetGoal = (ItemLevelData)greatestGoal;
 
         List<Item> itemsToCollect = new List<Item>();
 
         for (int i = 0; i < items.Length; i++)
         {
+            if (items[i] == null)
+            {
+                continue;
+            }
             if (items[i].Type == targetGoal.itemPrefab.Type)
             {
                 itemsToCollect.Add(items[i]);
@@ -55,11 +138,47 @@ public class PowerUpManager : MonoBehaviour
             }
         }
 
-        for (int i = itemsToCollect.Count - 1; i >= 0; i--)
+        vacuumItemsToCollect = itemsToCollect.Count;
+
+        for (int i = 0; i < itemsToCollect.Count; i++)
+        {
+            itemsToCollect[i].DisablePhysics();
+
+            Item itemToCollect = itemsToCollect[i];
+
+            List<Vector3> points = new List<Vector3>();
+
+
+            points.Add(itemsToCollect[i].transform.position);
+            points.Add(itemsToCollect[i].transform.position);
+            points.Add(itemsToCollect[i].transform.position + Vector3.up * 2);
+            points.Add(vacuumSuckPosition.position + Vector3.up * 2);
+            points.Add(vacuumSuckPosition.position);
+            points.Add(vacuumSuckPosition.position);
+
+            LeanTween.moveSpline(itemsToCollect[i].gameObject, points.ToArray(), 0.75f).setEase(LeanTweenType.easeInCubic).setOnComplete(() => ItemReachedVacuum(itemToCollect));
+
+            LeanTween.scale(itemsToCollect[i].gameObject,
+                Vector3.zero, 0.75f).setEase(LeanTweenType.easeInCubic);
+        }
+
+        for (int i = 0; i < itemsToCollect.Count; i++)
         {
             itemPickedUp?.Invoke(itemsToCollect[i]);
-            Destroy(itemsToCollect[i].gameObject);
         }
+
+    }
+
+    private void ItemReachedVacuum(Item item)
+    {
+        vacuumCounter++;
+
+        if (vacuumCounter >= vacuumItemsToCollect)
+        {
+            isBusy = false;
+        }
+
+        Destroy(item.gameObject);
     }
 
     private ItemLevelData? GetGreatestGoal(ItemLevelData[] goals)
@@ -80,5 +199,24 @@ public class PowerUpManager : MonoBehaviour
         if (goalIndex <= -1)
             return null;
         return goals[goalIndex];
+    }
+
+    private void UpdateVacuumVisuals()
+    {
+        vacuum.UpdateVisuals(vacuumPUCount);
+    }
+
+    private void LoadData()
+    {
+        // TODO: bug var burda bir yerde ama uğraşamıcam
+        vacuumPUCount = PlayerPrefs.GetInt("VacuumCount", initialPUCount);
+        Debug.Log("VacumCount : ${vacuumPUCount}");
+        UpdateVacuumVisuals();
+    }
+
+    private void SaveData()
+    {
+        PlayerPrefs.SetInt("VacuumCount", vacuumPUCount);
+        UpdateVacuumVisuals();
     }
 }
