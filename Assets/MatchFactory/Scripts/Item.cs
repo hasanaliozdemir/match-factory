@@ -34,6 +34,11 @@ public class Item : MonoBehaviour
         this.spot = spot;
     }
 
+    public void UnassignSpot()
+    {
+        spot = null;
+    }
+
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
@@ -53,11 +58,25 @@ public class Item : MonoBehaviour
 
     }
 
+    public void EnableShadow()
+    {
+        // Implementation to disable the item's shadow
+        itemRenderer.shadowCastingMode = UnityEngine.Rendering.ShadowCastingMode.On;
+
+    }
+
     public void DisablePhysics()
     {
         // Implementation to disable the item's collider/physics
         rig.isKinematic = true;
         itemCollider.enabled = false;
+    }
+
+    public void EnablePhysics()
+    {
+        // Implementation to disable the item's collider/physics
+        rig.isKinematic = false;
+        itemCollider.enabled = true;
     }
 
     public void Select(Material outlineMaterial)

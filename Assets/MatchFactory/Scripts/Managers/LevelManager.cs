@@ -11,6 +11,7 @@ public class LevelManager : MonoBehaviour, IGameStateListener
     [SerializeField] private Level[] levels;
 
     public Item[] Items() => currentLevel.GetItems();
+    public Transform ItemParent => currentLevel.ItemParent;
 
     private const string LEVEL_KEY = "Level";
     private int levelIndex;

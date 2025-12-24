@@ -29,6 +29,7 @@ public class GoalManager : MonoBehaviour
         LevelManager.levelSpawned += OnLevelSpawned;
         ItemSpotManager.itemPickedUp += OnItemPickedUp;
         PowerUpManager.itemPickedUp += OnItemPickedUp;
+        PowerUpManager.itemBackToGame += OnItemBackToGame;
     }
 
 
@@ -38,6 +39,23 @@ public class GoalManager : MonoBehaviour
         LevelManager.levelSpawned -= OnLevelSpawned;
         ItemSpotManager.itemPickedUp -= OnItemPickedUp;
         PowerUpManager.itemPickedUp -= OnItemPickedUp;
+        PowerUpManager.itemBackToGame -= OnItemBackToGame;
+    }
+
+    private void OnItemBackToGame(Item releasedItem)
+    {
+        // Loop through goals
+        // If this item is a goal, increase goal amount and UI
+
+        for (int i = 0; i < goals.Length; i++)
+        {
+            if (goals[i].itemPrefab.Type != releasedItem.Type)
+                continue;
+
+
+            goals[i].amount++;
+            goalCards[i].UpdateAmount(goals[i].amount);
+        }
     }
 
     private void OnLevelSpawned(Level level)

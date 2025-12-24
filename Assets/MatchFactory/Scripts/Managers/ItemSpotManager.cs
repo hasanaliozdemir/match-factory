@@ -5,8 +5,12 @@ using MatchFactory.Scripts.Enums;
 using UnityEngine;
 using UnityEngine.XR;
 
+using Random = UnityEngine.Random;
+
 public class ItemSpotManager : MonoBehaviour
 {
+    public static ItemSpotManager instance;
+
     [Header("Elements")]
     [SerializeField] private Transform itemSpotsParent;
     private ItemSpot[] spots;
@@ -34,7 +38,18 @@ public class ItemSpotManager : MonoBehaviour
 
     void Awake()
     {
+
+        if (instance == null)
+        {
+            instance = this;
+        }
+        else
+        {
+            Destroy(gameObject);
+        }
+
         InputManager.itemClicked += OnItemClicked;
+        PowerUpManager.itemBackToGame += OnItemBackToGame;
 
         StoreSpots();
     }
@@ -42,9 +57,29 @@ public class ItemSpotManager : MonoBehaviour
     void OnDestroy()
     {
         InputManager.itemClicked -= OnItemClicked;
+        PowerUpManager.itemBackToGame -= OnItemBackToGame;
     }
 
+    private void OnItemBackToGame(Item releasedItem)
+    {
+        if (!itemMergeDataDictionary.ContainsKey(releasedItem.Type))
+        {
+            return;
+        }
 
+        // remove the item from dictionary
+
+        itemMergeDataDictionary[releasedItem.Type].RemoveItem(releasedItem);
+
+        // Check if we have more items with the same key
+
+        // if not, remove the dictionary entry
+
+        if (itemMergeDataDictionary[releasedItem.Type].items.Count <= 0)
+        {
+            itemMergeDataDictionary.Remove(releasedItem.Type);
+        }
+    }
 
     private void OnItemClicked(Item item)
     {
@@ -345,5 +380,27 @@ public class ItemSpotManager : MonoBehaviour
             }
         }
         return false;
+    }
+
+
+    public ItemSpot GetRandomOccupiedSpot()
+    {
+        List<ItemSpot> occupiedSpot = new List<ItemSpot>();
+
+        for (int i = 0; i < spots.Length; i++)
+        {
+            if (spots[i].IsEmpty())
+            {
+                continue;
+            }
+            occupiedSpot.Add(spots[i]);
+        }
+
+        if (occupiedSpot.Count <= 0)
+        {
+            return null;
+        }
+
+        return occupiedSpot[Random.Range(0, occupiedSpot.Count)];
     }
 }

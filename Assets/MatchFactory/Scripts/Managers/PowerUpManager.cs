@@ -9,6 +9,7 @@ public class PowerUpManager : MonoBehaviour
 
     [Header("Actions")]
     public static Action<Item> itemPickedUp;
+    public static Action<Item> itemBackToGame;
 
     [Header("Settings")]
     private bool isBusy = false;
@@ -96,7 +97,7 @@ public class PowerUpManager : MonoBehaviour
     {
 
     }
-
+    #region Vacuum
     [Button]
     private void VacuumPowerup()
     {
@@ -205,6 +206,45 @@ public class PowerUpManager : MonoBehaviour
     {
         vacuum.UpdateVisuals(vacuumPUCount);
     }
+    #endregion
+
+
+    #region Spring
+
+    [Button]
+    public void SpringPowerUp()
+    {
+
+
+        ItemSpot spot = ItemSpotManager.instance.GetRandomOccupiedSpot();
+
+        if (spot == null)
+        {
+            return;
+        }
+
+        isBusy = true;
+
+        Item itemToRelease = spot.Item;
+
+        spot.Clear();
+
+        itemToRelease.UnassignSpot();
+        itemToRelease.EnablePhysics();
+        itemToRelease.EnableShadow();
+
+        itemToRelease.transform.parent = LevelManager.Instance.ItemParent;
+        itemToRelease.transform.localPosition = Vector3.up * 3;
+        itemToRelease.transform.localScale = Vector3.one;
+
+        itemBackToGame?.Invoke(itemToRelease);
+    }
+
+
+
+
+    #endregion
+
 
     private void LoadData()
     {
