@@ -8,6 +8,26 @@ This document provides a comprehensive review of the Match Factory Unity game co
 **Total Lines of Code:** ~1,785 lines  
 **Review Date:** December 2025
 
+## 📑 Table of Contents
+1. [Executive Summary](#-executive-summary)
+2. [Architecture & Design Patterns](#1-architecture--design-patterns)
+3. [Code Quality Issues](#2-code-quality-issues)
+4. [Null Safety and Error Handling](#3-null-safety-and-error-handling)
+5. [Performance Concerns](#4-performance-concerns)
+6. [Code Organization](#5-code-organization)
+7. [Unity-Specific Issues](#6-unity-specific-issues)
+8. [Specific File Reviews](#7-specific-file-reviews)
+9. [Data Management Issues](#8-data-management-issues)
+10. [Testing Considerations](#9-testing-considerations)
+11. [Security and Validation](#10-security-and-validation)
+12. [Extension Methods Review](#11-extension-methods-review)
+13. [Utilities Review](#12-utilities-review)
+14. [Priority Matrix](#-priority-matrix)
+15. [Learning Opportunities](#-learning-opportunities)
+16. [Action Items Checklist](#-action-items-checklist)
+17. [Code Quality Metrics](#-code-quality-metrics)
+18. [Conclusion](#-conclusion)
+
 ---
 
 ## 🎯 Executive Summary
@@ -205,10 +225,13 @@ if (itemsToCollect.Count >= 3)  // Should be a constant
 public class GameConstants
 {
     public const int ITEMS_NEEDED_FOR_MERGE = 3;
+    public const int RESERVED_SPOTS_FOR_MERGE = 3;
     public const int VACUUM_POWERUP_COUNT = 3;
+    public const int ARRAY_OFFSET_FOR_PROCESSING = 2; // spots.Length - 2
 }
 
-// Usage
+// Usage examples
+for (int i = GameConstants.RESERVED_SPOTS_FOR_MERGE; i < spots.Length; i++)
 if (itemsToCollect.Count >= GameConstants.ITEMS_NEEDED_FOR_MERGE)
 ```
 
@@ -458,7 +481,13 @@ using Unity.VisualScripting;  // Unused - appears in multiple files
 ```
 
 **Recommendation:**
-Use IDE tools to remove unused imports. In Visual Studio/Rider: Right-click → Remove Unused Usings
+Use IDE automated detection tools to remove unused imports efficiently:
+
+- **Visual Studio / Rider**: Right-click → Remove Unused Usings
+- **Visual Studio Code**: Use the "Organize Usings" command (Ctrl+Shift+O)
+- **Command Line**: Use dotnet-format or Roslyn analyzers to detect and remove automatically
+
+You can also configure these tools to run on save or as part of your pre-commit hooks for consistent cleanup.
 
 ### 6.3 Editor-Only Code
 
@@ -541,6 +570,8 @@ public void NextButtonCallback()
 
 **Issues:**
 1. Comment in Turkish: `// TODO: bug var burda bir yerde ama uğraşamıcam` (line 285)
+   - Translation: "TODO: there's a bug here somewhere but I won't bother"
+   - Should be translated to English or the bug should be fixed/documented properly
 2. Multiple regions for different powerups - could be separate classes
 3. `[Button]` attributes left in production code (NaughtyAttributes)
 4. Inconsistent powerup implementation (some are placeholders)
